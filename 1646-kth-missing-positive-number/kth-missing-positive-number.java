@@ -1,4 +1,4 @@
-class Solution {
+/*class Solution {
     public int findKthPositive(int[] arr, int k) {
         int count=0;
         int index=0;
@@ -8,5 +8,20 @@ class Solution {
             if(count==k) return i;
         }
         return -1;
+    }
+}*/
+
+class Solution {
+    public int findKthPositive(int[] arr, int k) {
+        int n=arr.length;
+        for(int i=0;i<n;i++){
+            if(arr[i]<=k){
+                k++;
+            }
+            else{
+                break;
+            }
+        }
+        return k;
     }
 }
