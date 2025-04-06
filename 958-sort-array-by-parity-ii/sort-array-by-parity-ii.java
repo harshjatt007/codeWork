@@ -1,4 +1,3 @@
-
 class Solution {
     public int[] sortArrayByParityII(int[] A) {
         int i = 0, j = 1, n = A.length;
