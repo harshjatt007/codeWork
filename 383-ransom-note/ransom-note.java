@@ -1,22 +1,30 @@
 class Solution {
     public boolean canConstruct(String ransomNote, String magazine) {
-        HashMap<Character,Integer>map1=new HashMap<>();
-        HashMap<Character,Integer>map2=new HashMap<>();
-        for(char c:ransomNote.toCharArray()){
-            map1.put(c,map1.getOrDefault(c,0)+1);
+        int m = magazine.length(), n = ransomNote.length();
+        if(m < n) return false;
+        int[] alphabetFrequency = new int[26];
+        for(char c: magazine.toCharArray()) {
+            alphabetFrequency[c - 'a']++;
         }
-        for(char c:magazine.toCharArray()){
-            map2.put(c,map2.getOrDefault(c,0)+1);
+        for(char c: ransomNote.toCharArray()) {
+            if(alphabetFrequency[c - 'a'] == 0) return false;
+            alphabetFrequency[c - 'a']--;
         }
-        for (Map.Entry<Character, Integer> entry : map1.entrySet()) {
-            char key = entry.getKey();
-            int count = entry.getValue();
-
-            if (map2.getOrDefault(key, 0) < count) {
-                return false;
-            }
-        }
-
         return true;
     }
 }
+
+/*
+class Solution {
+    public boolean canConstruct(String ransomNote, String magazine) {
+        int [] freq=new int[26];
+        for(char c:ransomNote.toCharArray()){
+            int cnt=magazine.indexOf(c,freq[c-'a']);
+            if(cnt==-1)
+            return false;
+            freq[c-'a']=cnt+1;
+        }
+        return true;
+    }
+}
+*/
