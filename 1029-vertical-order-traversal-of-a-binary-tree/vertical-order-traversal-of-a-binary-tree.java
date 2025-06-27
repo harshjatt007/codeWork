@@ -1,67 +1,57 @@
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
 import java.util.*;
 
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
-class Solution {
+class TreeNode {
+    int val;
+    TreeNode left, right;
+    TreeNode(int x) { val = x; }
+}
 
-    private static record State(TreeNode node, int col, int row) {}
+public class Solution {
+    static class Info {
+        TreeNode node;
+        int row, col;
+        Info(TreeNode node, int row, int col) {
+            this.node = node;
+            this.row = row;
+            this.col = col;
+        }
+    }
 
     public List<List<Integer>> verticalTraversal(TreeNode root) {
-        // grid[col][row] -> PQ of values
-        TreeMap<Integer, TreeMap<Integer, PriorityQueue<Integer>>> grid = new TreeMap<>();
+        List<Info> nodes = new ArrayList<>();
+        Queue<Info> queue = new LinkedList<>();
+        queue.offer(new Info(root, 0, 0));
 
-        Queue<State> q = new ArrayDeque<>();
-        q.offer(new State(root, 0, 0));
+        // BFS traversal to collect all nodes with their (row, col)
+        while (!queue.isEmpty()) {
+            Info info = queue.poll();
+            nodes.add(info);
 
-        while (!q.isEmpty()) {
-            State cur = q.poll();
-            TreeNode n = cur.node();
-            int c = cur.col(), r = cur.row();
-
-            grid.computeIfAbsent(c, _ -> new TreeMap<>())
-                .computeIfAbsent(r, _ -> new PriorityQueue<>())
-                .offer(n.val);
-
-            if (n.left  != null) q.offer(new State(n.left,  c - 1, r + 1));
-            if (n.right != null) q.offer(new State(n.right, c + 1, r + 1));
+            if (info.node.left != null)
+                queue.offer(new Info(info.node.left, info.row + 1, info.col - 1));
+            if (info.node.right != null)
+                queue.offer(new Info(info.node.right, info.row + 1, info.col + 1));
         }
 
-        List<List<Integer>> ans = new ArrayList<>();
-        for (TreeMap<Integer, PriorityQueue<Integer>> rows : grid.values()) {
-            List<Integer> colList = new ArrayList<>();
-            for (PriorityQueue<Integer> pq : rows.values()) {
-                while (!pq.isEmpty()) colList.add(pq.poll());
+        // Sort nodes: first by col, then row, then value
+        nodes.sort((a, b) -> {
+            if (a.col != b.col) return a.col - b.col;
+            if (a.row != b.row) return a.row - b.row;
+            return a.node.val - b.node.val;
+        });
+
+        // Group sorted nodes by column
+        List<List<Integer>> result = new ArrayList<>();
+        int prevCol = Integer.MIN_VALUE;
+
+        for (Info info : nodes) {
+            if (info.col != prevCol) {
+                result.add(new ArrayList<>());
+                prevCol = info.col;
             }
-            ans.add(colList);
+            result.get(result.size() - 1).add(info.node.val);
         }
-        return ans;
+
+        return result;
     }
 }
