@@ -1,41 +1,37 @@
 class Solution {
     public int maximumGain(String s, int x, int y) {
-        if (x < y) {
-            return maximumGain(swapABBA(s), y, x);
+        if(x<y){
+            return maximumGain(swap(s),y,x);
         }
-
-        int res = 0;
-        StringBuilder sb = new StringBuilder();
-        for (char c : s.toCharArray()) {
-            if (c == 'b' && sb.length() > 0 && sb.charAt(sb.length()-1) == 'a') {
-                sb.deleteCharAt(sb.length()-1);
-                res += x;
-            } else {
-                sb.append(c);
+        int res=0;
+        Stack<Character>stack=new Stack<>();
+        for(char c:s.toCharArray()){
+            if(!stack.isEmpty() && stack.peek()=='a' && c=='b'){
+                res+=x;
+                stack.pop();
             }
+            else stack.push(c);
         }
-
-        StringBuilder afterFirst = sb;
-        sb = new StringBuilder();
-        for (int i = 0; i < afterFirst.length(); ++i) {
-            char c = afterFirst.charAt(i);
-            if (c == 'a' && sb.length() > 0 && sb.charAt(sb.length()-1) == 'b') {
-                sb.deleteCharAt(sb.length()-1);
-                res += y;
-            } else {
-                sb.append(c);
+        Stack<Character>temp=new Stack<>();
+        while(!stack.isEmpty()) temp.push(stack.pop());
+        while(!temp.isEmpty()){
+            char c=temp.pop();
+            if(!stack.isEmpty() && stack.peek()=='b' && c=='a'){
+                stack.pop();
+                res+=y;
             }
+            else stack.push(c);
         }
         return res;
-    }
 
-    private String swapABBA(String s) {
-        StringBuilder swapped = new StringBuilder();
-        for (char c : s.toCharArray()) {
-            if (c == 'a') swapped.append('b');
-            else if (c == 'b') swapped.append('a');
-            else swapped.append(c);
+    }
+    public String swap(String s){
+        StringBuilder sb=new StringBuilder();
+        for(char c:s.toCharArray()){
+            if(c=='a') sb.append('b');
+            else if(c=='b') sb.append('a');
+            else sb.append(c);
         }
-        return swapped.toString();
+        return sb.toString();
     }
 }
