@@ -1,23 +1,31 @@
 class Solution {
     public List<List<Integer>> permuteUnique(int[] nums) {
-        List<List<Integer>>result=new ArrayList<>();
-        List<Integer>arr=new ArrayList<>();
-        for(int i:nums) arr.add(i);
-        HashSet<List<Integer>> set = new HashSet<>();
-        permute(set,arr,0);
-        result.addAll(set);
+        List<List<Integer>> result = new ArrayList<>();
+        Arrays.sort(nums); // Sort to handle duplicates
+        boolean[] used = new boolean[nums.length];
+        backtrack(result, new ArrayList<>(), nums, used);
         return result;
     }
-    public void permute(HashSet<List<Integer>>set,List<Integer>arr,int start){
-        if(start==arr.size()){
-            set.add(new ArrayList<>(arr));
+
+    private void backtrack(List<List<Integer>> result, List<Integer> tempList, int[] nums, boolean[] used) {
+        if (tempList.size() == nums.length) {
+            result.add(new ArrayList<>(tempList));
             return;
         }
-        for(int i=start;i<arr.size();i++){
-            Collections.swap(arr,i,start);
-            permute(set,arr,start+1);
-            Collections.swap(arr,i,start);
+
+        for (int i = 0; i < nums.length; i++) {
+            // Skip used
+            if (used[i]) continue;
+            // Skip duplicates: if current equals previous and previous wasn't used in this path
+            if (i > 0 && nums[i] == nums[i - 1] && !used[i - 1]) continue;
+
+            used[i] = true;
+            tempList.add(nums[i]);
+
+            backtrack(result, tempList, nums, used);
+
+            used[i] = false;
+            tempList.remove(tempList.size() - 1);
         }
-        return ;
     }
 }
