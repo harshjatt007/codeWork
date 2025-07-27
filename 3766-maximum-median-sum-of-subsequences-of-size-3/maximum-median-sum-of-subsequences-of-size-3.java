@@ -1,19 +1,12 @@
 class Solution {
     public long maximumMedianSum(int[] nums) {
-        int n=nums.length;
-        long ans=0;
-        int cnt=0;
         Arrays.sort(nums);
-        int i=0;
-        int j=n-1;
-        int k=j-1;
-        while(cnt++<n/3)
-            {
-                ans+=nums[k];
-                k-=2;
-                j-=2;
-                i+=2;
-            }
-        return ans;
+        long r = 0;
+        int n = nums.length;
+        int d = n / 3;
+        for (int i = d; i < n; i += 2) {
+            r += (long) nums[i];
+        }
+        return r;
     }
 }
